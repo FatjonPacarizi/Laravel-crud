@@ -12,7 +12,10 @@ class EmployeeController extends Controller
     public function index()
     {
         $employees = Employee::paginate(5);
-        return view('employee.index')->with('employees', $employees);
+        if ($employees) {
+            return view('employee.index')->with('employees', $employees);
+        }
+        return view('employee.index')->with('message', 'Failed');
     }
 
     public function create()
@@ -22,15 +25,12 @@ class EmployeeController extends Controller
 
     public function store(EmployeeRequest $request)
     {
-        $employee = new Employee();
-
-        $employee->name = request('name');
-        $employee->email = request('email');
-        $employee->address = request('address');
-        $employee->phone = request('phone');
-
-        $employee->save();
-
+        $employee = Employee::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'address' => $request->address,
+            'phone' => $request->phone,
+        ]);
         return redirect('/')->with('message', 'Emplyee Registred');
     }
 
@@ -42,29 +42,35 @@ class EmployeeController extends Controller
     public function edit($id)
     {
         $employee = Employee::find($id);
-        return view('employee.edit')->with([
-            'employee' => $employee
-        ]);
+        if ($employee) {
+            return view('employee.edit')->with([
+                'employee' => $employee
+            ]);
+        }
+        return redirect('/')->with('message', 'Failed');
     }
 
     public function update(EmployeeRequest $request, $id)
     {
         $employee = Employee::find($id);
-        $employee->name = $request->input('name');
-        $employee->email = $request->input('email');
-        $employee->phone = $request->input('phone');
-        $employee->address = $request->input('address');
-
-        $employee->update();
-
-        return redirect('/')->with('message', 'Employee Updated');
+        if ($employee) {
+            $employee->update($request->all());
+            if ($employee) {
+                return redirect('/')->with('message', 'Employee Updated');
+            }
+        }
+        return redirect('/')->with('message', 'Failed');
     }
 
     public function destroy($id)
     {
         $employee = Employee::findOrFail($id);
-        $employee->delete();
-        
-        return redirect('/')->with('message', 'Emplyee Deleted');
+        if ($employee) {
+            $employee->delete();
+            if ($employee) {
+                return redirect('/')->with('message', 'Emplyee Deleted');
+            }
+        }
+        return redirect('/')->with('message', 'Failed');
     }
 }

@@ -13,4 +13,10 @@ class Employee extends Model
 
     public $primaryKey = 'id';
 
+    protected $fillable = ([
+        'name',
+        'email',
+        'address',
+        'phone',
+    ]);
 }

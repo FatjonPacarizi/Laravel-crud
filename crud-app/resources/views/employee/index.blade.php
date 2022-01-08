@@ -24,6 +24,7 @@
             <th>Phone</th>
             <th width="280px">Action</th>
     </tr>
+    @if(isset($employees))
     @foreach($employees as $employee)
     <tr>
         <td>{{ $employee->name }}</td>
@@ -46,8 +47,11 @@
         </td>
     </tr>
     @endforeach
+    @endif
 </table>  
+@if(isset($employees))
 <div>
     {{ $employees->links('pagination::bootstrap-4') }}
 </div> 
+@endif
 @endsection
